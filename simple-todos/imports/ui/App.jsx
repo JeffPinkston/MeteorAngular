@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react';
+import SelectPicker from 'react-select-picker';
 import ReactDOM from 'react-dom';
 import { Meteor } from 'meteor/meteor';
 import { createContainer } from 'meteor/react-meteor-data';
@@ -15,7 +16,8 @@ class App extends Component {
 		super(props);
 
 		this.state = {
-			hideCompleted: false
+			hideCompleted: false,
+			selectedType: 'Record'
 		};
 	}
 	handleSubmit(event) {
@@ -36,6 +38,10 @@ class App extends Component {
 		});
 	}
 
+	handleTypeChange(val) {
+		this.setState({ selectedType: val });
+	}
+
   renderTasks() {
 		let filteredTasks = this.props.tasks;
 		if(this.state.hideCompleted){
@@ -50,27 +56,25 @@ class App extends Component {
     return (
       <div className="container">
         <header>
-          <h1>Todo List ({this.props.incompleteCount})</h1>
-
-					<label className="hide-completed">
-						<input
-							type="checkbox"
-							readOnly
-							checked={this.state.hideCompleted}
-							onClick={this.toggleHideCompleted.bind(this)}
-							/>
-						Hide Completed Tasks
-					</label>
+          <h1>{this.state.selectedType} List ({this.props.incompleteCount})</h1>
 
 					<AccountsUIWrapper />
 
 						{ this.props.currentUser ?
 	            <form className="new-task" onSubmit={this.handleSubmit.bind(this)} >
+							<SelectPicker
+								className="select-type"
+								defaultValue={this.state.selectedType}
+								onChange={this.handleTypeChange.bind(this)}>
+								<option>Record</option>
+								<option>Concert</option>
+								</SelectPicker>
 	              <input
 	                type="text"
 	                ref="textInput"
 	                placeholder="Type to add new tasks"
 	              />
+
 	            </form> : ''
 	          }
         </header>
